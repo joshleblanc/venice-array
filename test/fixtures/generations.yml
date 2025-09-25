@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  style_preset: MyString
+  user: one
+  generation_array: one
+
+two:
+  style_preset: MyString
+  user: two
+  generation_array: two

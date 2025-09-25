@@ -1,0 +1,2 @@
+module GenerationArraysHelper
+end

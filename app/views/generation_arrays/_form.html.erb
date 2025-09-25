@@ -1,0 +1,62 @@
+<%= form_with(model: generation_array, class: "contents") do |form| %>
+  <% if generation_array.errors.any? %>
+    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
+      <h2><%= pluralize(generation_array.errors.count, "error") %> prohibited this generation_array from being saved:</h2>
+
+      <ul class="list-disc ml-6">
+        <% generation_array.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="my-5">
+    <%= form.label :prompt %>
+    <%= form.text_field :prompt, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": generation_array.errors[:prompt].none?, "border-red-400 focus:outline-red-600": generation_array.errors[:prompt].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :model %>
+    <%= form.text_field :model, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": generation_array.errors[:model].none?, "border-red-400 focus:outline-red-600": generation_array.errors[:model].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :cfg_scale %>
+    <%= form.text_field :cfg_scale, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": generation_array.errors[:cfg_scale].none?, "border-red-400 focus:outline-red-600": generation_array.errors[:cfg_scale].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :lora_strength %>
+    <%= form.number_field :lora_strength, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": generation_array.errors[:lora_strength].none?, "border-red-400 focus:outline-red-600": generation_array.errors[:lora_strength].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :negative_prompt %>
+    <%= form.text_field :negative_prompt, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": generation_array.errors[:negative_prompt].none?, "border-red-400 focus:outline-red-600": generation_array.errors[:negative_prompt].any?}] %>
+  </div>
+
+  <div class="my-5 flex items-center gap-2">
+    <%= form.label :safe_mode %>
+    <%= form.checkbox :safe_mode, class: ["block shadow-sm rounded-md border order-first h-5 w-5", {"border-gray-400 focus:outline-blue-600": generation_array.errors[:safe_mode].none?, "border-red-400 focus:outline-red-600": generation_array.errors[:safe_mode].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :seed %>
+    <%= form.number_field :seed, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": generation_array.errors[:seed].none?, "border-red-400 focus:outline-red-600": generation_array.errors[:seed].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :steps %>
+    <%= form.number_field :steps, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": generation_array.errors[:steps].none?, "border-red-400 focus:outline-red-600": generation_array.errors[:steps].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :user_id %>
+    <%= form.text_field :user_id, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": generation_array.errors[:user_id].none?, "border-red-400 focus:outline-red-600": generation_array.errors[:user_id].any?}] %>
+  </div>
+
+  <div class="inline">
+    <%= form.submit class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
+  </div>
+<% end %>
