@@ -18,7 +18,10 @@
 
   <div class="my-5">
     <%= form.label :model %>
-    <%= form.text_field :model, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": generation_array.errors[:model].none?, "border-red-400 focus:outline-red-600": generation_array.errors[:model].any?}] %>
+    <%= form.select :model,
+      options_for_select(@model_options, generation_array.model),
+      { include_blank: "Select a model" },
+      class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": generation_array.errors[:model].none?, "border-red-400 focus:outline-red-600": generation_array.errors[:model].any?}] %>
   </div>
 
   <div class="my-5">

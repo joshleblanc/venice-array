@@ -1,5 +1,6 @@
 class GenerationArraysController < ApplicationController
   before_action :set_generation_array, only: %i[ show edit update destroy ]
+  before_action :set_models, only: %i[ new edit create update ]
 
   # GET /generation_arrays or /generation_arrays.json
   def index
@@ -26,7 +27,7 @@ class GenerationArraysController < ApplicationController
 
     respond_to do |format|
       if @generation_array.save
-        GenerateForAllStylesJob.perform_later(@generation_array.id)
+        GenerateForAllStylesJob.perform_later(@generation_array)
         format.html { redirect_to @generation_array, notice: "Generation array was successfully created." }
         format.json { render :show, status: :created, location: @generation_array }
       else
@@ -63,6 +64,28 @@ class GenerationArraysController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_generation_array
       @generation_array = GenerationArray.find(params.expect(:id))
+    end
+
+    # Fetch models for dropdown from Venice API
+    def set_models
+      @model_options = []
+      user = Current.user
+      begin
+        conn = Faraday.new(url: "https://api.venice.ai") do |faraday|
+          faraday.response :json
+          faraday.adapter Faraday.default_adapter
+        end
+        response = conn.get("/api/v1/models?type=image") do |request|
+          request.headers["Authorization"] = "Bearer #{user.venice_api_key}" if user&.venice_api_key.present?
+        end
+        list = response.body["data"]
+        @model_options = list.map do |item|
+          [item["model_spec"]["name"], item["id"]]
+        end.compact
+      rescue => e
+        Rails.logger.error("Failed to fetch models: #{e.class} #{e.message}")
+        @model_options ||= []
+      end
     end
 
     # Only allow a list of trusted parameters through.

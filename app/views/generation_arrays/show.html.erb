@@ -10,7 +10,7 @@
   <%= render @generation_array %>
 
   <h2 class="font-bold text-2xl mt-8">Generations</h2>
-  <%= turbo_frame_tag dom_id(@generation_array, :generations_frame), src: generation_array_generations_path(@generation_array), loading: :lazy do %>
+  <%= turbo_frame_tag dom_id(@generation_array, :generations), src: generation_array_generations_path(@generation_array), loading: :lazy do %>
     <div class="text-gray-500">Loading generations…</div>
   <% end %>
 
