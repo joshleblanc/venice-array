@@ -65,3 +65,5 @@ group :test do
 end
 
 gem "faraday", "~> 2.13"
+
+gem "image_processing", "~> 1.14"

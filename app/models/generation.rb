@@ -1,13 +1,8 @@
 class Generation < ApplicationRecord
   belongs_to :user
-  belongs_to :generation_array
+  belongs_to :generation_array, touch: true
 
-  has_one_attached :image
-
-  after_create_commit do
-    broadcast_append_to generation_array,
-      target: ActionView::RecordIdentifier.dom_id(generation_array, :generations),
-      partial: "generations/generation",
-      locals: { generation: self }
+  has_one_attached :image do 
+    it.variant :thumb, resize_to_limit: [256, 256], preprocessed: true 
   end
 end
