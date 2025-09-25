@@ -3,7 +3,12 @@ class GenerationsController < ApplicationController
 
   # GET /generations or /generations.json
   def index
-    @generations = Generation.all
+    if params[:generation_array_id]
+      @generation_array = GenerationArray.find(params[:generation_array_id])
+      @generations = @generation_array.generations.order(created_at: :asc)
+    else
+      @generations = Generation.where(user: current_user).all
+    end
   end
 
   # GET /generations/1 or /generations/1.json
@@ -14,7 +19,6 @@ class GenerationsController < ApplicationController
   def new
     @generation = Generation.new
   end
-
   # GET /generations/1/edit
   def edit
   end

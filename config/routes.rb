@@ -1,12 +1,21 @@
 Rails.application.routes.draw do
+  # Root directs authenticated users to the generation array form
+  root to: "generation_arrays#new"
+
+  # Top-level resources (keep for now)
   resources :generations
-  resources :generation_arrays
+  # User registration
+  resources :users, only: [:new, :create]
+
+  # Users create a generation array, and we show its generations nested
+  resources :generation_arrays do
+    resources :generations, only: [:index]
+  end
   resource :session
   resources :passwords, param: :token
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
 
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)

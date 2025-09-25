@@ -22,9 +22,11 @@ class GenerationArraysController < ApplicationController
   # POST /generation_arrays or /generation_arrays.json
   def create
     @generation_array = GenerationArray.new(generation_array_params)
+    @generation_array.user = Current.user
 
     respond_to do |format|
       if @generation_array.save
+        GenerateForAllStylesJob.perform_later(@generation_array.id)
         format.html { redirect_to @generation_array, notice: "Generation array was successfully created." }
         format.json { render :show, status: :created, location: @generation_array }
       else
@@ -65,6 +67,6 @@ class GenerationArraysController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def generation_array_params
-      params.expect(generation_array: [ :prompt, :model, :cfg_scale, :lora_strength, :negative_prompt, :safe_mode, :seed, :steps, :user_id ])
+      params.expect(generation_array: [ :prompt, :model, :cfg_scale, :lora_strength, :negative_prompt, :safe_mode, :seed, :steps ])
     end
-end
+  end
