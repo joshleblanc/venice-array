@@ -5,6 +5,14 @@ class GenerationArray < ApplicationRecord
 
   has_many :generations, dependent: :destroy
 
+  after_create do 
+    generations = FetchStylesJob.perform_now(user).map do |style|
+      Generation.new(style_preset: style, user: user, generation_array: self)
+    end
+    Generation.import(generations)
+    touch
+  end
+
   after_initialize do 
     self.model ||= "venice-sd35"
     self.cfg_scale ||= 5

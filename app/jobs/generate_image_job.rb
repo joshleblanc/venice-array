@@ -1,4 +1,6 @@
 class GenerateImageJob < ApplicationJob
+  class RateLimitError < StandardError; end 
+
   limits_concurrency to: 4, key: -> (generation) { generation.generation_array }
   queue_as :default
 
@@ -30,7 +32,10 @@ class GenerateImageJob < ApplicationJob
       request.body = body.to_json
     end
 
-    p body
+    if response.status != 200
+      raise RateLimitError.new
+    end
+
     base64_data = response.body["images"].first
     image_data = Base64.decode64(base64_data)
     string_io = StringIO.new(image_data)
