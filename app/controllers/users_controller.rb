@@ -16,8 +16,26 @@ class UsersController < ApplicationController
     end
   end
 
+  def edit
+    @user = Current.user
+  end
+
+  def update
+    @user = Current.user
+    if @user.update(user_params)
+      redirect_to after_authentication_url, notice: "Profile updated."
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
   private
     def user_params
-      params.require(:user).permit(:email_address, :password, :password_confirmation, :venice_api_key)
+      permitted = params.require(:user).permit(:email_address, :password, :password_confirmation, :venice_api_key)
+      if permitted[:password].blank?
+        permitted.delete(:password)
+        permitted.delete(:password_confirmation)
+      end
+      permitted
     end
 end

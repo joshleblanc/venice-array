@@ -6,7 +6,6 @@ Rails.application.routes.draw do
   resources :generations
   # User registration
   resources :users, only: [:new, :create]
-  resource :profile, only: [:edit, :update], controller: "users"
 
   # Users create a generation array, and we show its generations nested
   resources :generation_arrays do
