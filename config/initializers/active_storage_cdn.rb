@@ -2,7 +2,7 @@ Rails.application.config.after_initialize do
   require "active_storage/service/s3_service"
 
   module SimpleCDNUrlReplacement
-    CDN_HOST = "cdn.jleb.dev"
+    CDN_HOST = "https://venice-array-production.tor1.cdn.digitaloceanspaces.com"
 
     def url(...)
       url = super
