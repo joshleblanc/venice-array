@@ -44,6 +44,5 @@ class GenerateImageJob < ApplicationJob
     string_io = StringIO.new(image_data)
     string_io.set_encoding(Encoding::BINARY)
     generation.image.attach(io: string_io, filename: "#{generation.style_preset}.webp", content_type: "image/webp")
-    generation.save!
   end
 end
