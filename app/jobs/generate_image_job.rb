@@ -1,7 +1,7 @@
 class GenerateImageJob < ApplicationJob
-  class RateLimitError < StandardError; end 
+  class RateLimitError < StandardError; end
 
-  limits_concurrency to: 4, key: -> (generation) { generation.generation_array }
+  limits_concurrency to: 4, key: ->(generation) { generation.generation_array }
   queue_as :default
 
   queue_with_priority 10
@@ -16,12 +16,12 @@ class GenerateImageJob < ApplicationJob
       negative_prompt: ga.negative_prompt,
       cfg_scale: ga.cfg_scale,
       steps: ga.steps,
-      seed: ga.seed,
+      # seed: ga.seed,
       safe_mode: ga.safe_mode,
       lora_strength: ga.lora_strength,
       style_preset: generation.style_preset,
       width: 1024,
-      height: 1024,
+      height: 1024
     }.compact
 
     response = Faraday.new(url: "https://api.venice.ai/api/v1/image/generate") do |faraday|

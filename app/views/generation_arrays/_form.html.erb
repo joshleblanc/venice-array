@@ -45,11 +45,6 @@
   </div>
 
   <div class="my-5">
-    <%= form.label :seed %>
-    <%= form.number_field :seed, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": generation_array.errors[:seed].none?, "border-red-400 focus:outline-red-600": generation_array.errors[:seed].any?}] %>
-  </div>
-
-  <div class="my-5">
     <%= form.label :steps %>
     <%= form.number_field :steps, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": generation_array.errors[:steps].none?, "border-red-400 focus:outline-red-600": generation_array.errors[:steps].any?}] %>
   </div>
