@@ -69,3 +69,7 @@ gem "faraday", "~> 2.13"
 gem "image_processing", "~> 1.14"
 
 gem "activerecord-import", "~> 2.2"
+
+group :production do
+  gem "aws-sdk-s3", "~> 1.199"
+end
