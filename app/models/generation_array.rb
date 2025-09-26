@@ -5,8 +5,11 @@ class GenerationArray < ApplicationRecord
 
   has_many :generations, dependent: :destroy
 
+  serialize :selected_styles, coder: JSON
+
   after_create do 
-    generations = FetchStylesJob.perform_now(user).map do |style|
+    styles_to_generate = selected_styles.present? && selected_styles.any? ? selected_styles : FetchStylesJob.perform_now(user)
+    generations = styles_to_generate.map do |style|
       Generation.new(style_preset: style, user: user, generation_array: self)
     end
     Generation.import(generations)
@@ -20,5 +23,6 @@ class GenerationArray < ApplicationRecord
     self.safe_mode ||= false
     self.seed ||= rand(0..999999999)
     self.steps ||= 25
+    self.selected_styles ||= []
   end
 end

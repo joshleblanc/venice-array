@@ -1,6 +1,7 @@
 class GenerationArraysController < ApplicationController
   before_action :set_generation_array, only: %i[ show edit update destroy ]
   before_action :set_models, only: %i[ new edit create update ]
+  before_action :set_styles, only: %i[ new edit create update ]
 
   # GET /generation_arrays or /generation_arrays.json
   def index
@@ -72,8 +73,14 @@ class GenerationArraysController < ApplicationController
       @model_options = FetchModelsJob.perform_now(user)
     end
 
+    # Fetch styles for selection from Venice API
+    def set_styles
+      user = Current.user
+      @available_styles = FetchStylesJob.perform_now(user)
+    end
+
     # Only allow a list of trusted parameters through.
     def generation_array_params
-      params.expect(generation_array: [ :prompt, :model, :cfg_scale, :lora_strength, :negative_prompt, :safe_mode, :seed, :steps ])
+      params.expect(generation_array: [ :prompt, :model, :cfg_scale, :lora_strength, :negative_prompt, :safe_mode, :seed, :steps, selected_styles: [] ])
     end
   end

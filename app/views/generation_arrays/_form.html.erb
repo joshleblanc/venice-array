@@ -49,6 +49,43 @@
     <%= form.number_field :steps, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": generation_array.errors[:steps].none?, "border-red-400 focus:outline-red-600": generation_array.errors[:steps].any?}] %>
   </div>
 
+  <div class="my-5">
+    <%= form.label :selected_styles, "Select Styles to Generate" %>
+    <div class="mt-2 max-h-64 overflow-y-auto border border-gray-300 rounded-md p-3 bg-gray-50">
+      <div class="mb-3 flex gap-2">
+        <button type="button" onclick="selectAllStyles()" class="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-500">Select All</button>
+        <button type="button" onclick="deselectAllStyles()" class="px-3 py-1 bg-gray-600 text-white text-sm rounded hover:bg-gray-500">Deselect All</button>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+        <% @available_styles.each do |style| %>
+          <label class="flex items-center space-x-2 text-sm">
+            <%= check_box_tag "generation_array[selected_styles][]", style, 
+                generation_array.selected_styles&.include?(style), 
+                class: "style-checkbox rounded border-gray-300 text-blue-600 focus:ring-blue-500" %>
+            <span class="text-gray-700"><%= style %></span>
+          </label>
+        <% end %>
+      </div>
+      <p class="text-xs text-gray-500 mt-2">
+        Leave all unchecked to generate all available styles (default behavior)
+      </p>
+    </div>
+  </div>
+
+  <script>
+    function selectAllStyles() {
+      document.querySelectorAll('.style-checkbox').forEach(checkbox => {
+        checkbox.checked = true;
+      });
+    }
+    
+    function deselectAllStyles() {
+      document.querySelectorAll('.style-checkbox').forEach(checkbox => {
+        checkbox.checked = false;
+      });
+    }
+  </script>
+
   <div class="inline">
     <%= form.submit class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
   </div>
