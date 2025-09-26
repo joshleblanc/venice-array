@@ -2,7 +2,7 @@
 
 <%= turbo_stream_from @generation_array %>
 
-<div class="md:w-2/3 w-full">
+<div class="w-full">
   <% if notice.present? %>
     <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
   <% end %>
@@ -12,7 +12,7 @@
   <%= render @generation_array %>
 
   <h2 class="font-bold text-2xl mt-8">Generations</h2>
-  <div class="flex flex-wrap">
+  <div class="flex flex-wrap" data-controller="lightbox">
     <% @generation_array.generations.each do |generation| %>
       <%= render generation, cached: true %>
     <% end %>

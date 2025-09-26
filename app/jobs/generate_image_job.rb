@@ -4,6 +4,8 @@ class GenerateImageJob < ApplicationJob
   limits_concurrency to: 4, key: -> (generation) { generation.generation_array }
   queue_as :default
 
+  queue_with_priority 10
+
   def perform(generation)
     user = generation.user
     ga = generation.generation_array
@@ -33,6 +35,7 @@ class GenerateImageJob < ApplicationJob
     end
 
     if response.status != 200
+      Rails.logger.error("Failed to generate image: #{response.body}")
       raise RateLimitError.new
     end
 

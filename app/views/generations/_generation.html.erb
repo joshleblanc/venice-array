@@ -1,6 +1,8 @@
-<div id="<%= dom_id generation %>" class="w-full sm:w-auto my-1 space-y-1 mx-1 space-x-1">
+<div id="<%= dom_id generation %>" class="w-full sm:w-auto my-1 space-y-1 mx-1 space-x-1" data-src="<%= rails_blob_path(generation.image, disposition: "attachment", only_path: true) if generation.image.attached? %>">
   <% if generation.image.attached? %>
-    <%= image_tag generation.image.variant(:thumb), class: "w-[128px] h-[128px] object-cover rounded" %>
+    <%= link_to generation.image  do %>
+      <%= image_tag generation.image.variant(:thumb), class: "w-[128px] h-[128px] object-cover rounded" %>
+    <% end %>
   <% else %>
     <div class="w-[128px] h-[128px] flex items-center justify-center bg-gray-100 rounded">
       <div class="h-6 w-6 border-4 border-gray-300 border-t-blue-600 rounded-full animate-spin" aria-label="Generating..."></div>
