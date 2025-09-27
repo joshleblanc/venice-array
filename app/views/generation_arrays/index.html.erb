@@ -1,32 +1,158 @@
-<% content_for :title, "Generation arrays" %>
+<% content_for :title, "Your Creative Gallery" %>
 
-<div class="w-full">
+<div class="w-full max-w-7xl mx-auto">
   <% if notice.present? %>
-    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
+    <div class="mb-8 p-4 bg-gradient-to-r from-green-100 to-emerald-100 border border-green-200 rounded-xl shadow-sm">
+      <p class="text-green-700 font-medium flex items-center">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <%= notice %>
+      </p>
+    </div>
   <% end %>
 
-  <div class="flex justify-between items-center">
-    <h1 class="font-bold text-4xl">Generation arrays</h1>
-    <%= link_to "New generation array", new_generation_array_path, class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white block font-medium" %>
+  <!-- Header Section -->
+  <div class="text-center mb-12">
+    <h1 class="heading-font text-5xl md:text-6xl font-bold bg-gradient-to-r from-orange-600 via-amber-600 to-orange-500 bg-clip-text text-transparent mb-4">
+      Your Creative Gallery
+    </h1>
+    <p class="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
+      Explore your AI-generated masterpieces and create new artistic visions with our curated style collection.
+    </p>
+    <%= link_to new_generation_array_path, class: "btn-primary inline-flex items-center space-x-2" do %>
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+      </svg>
+      <span>Create New Array</span>
+    <% end %>
   </div>
 
-  <div id="generation_arrays" class="min-w-full divide-y divide-gray-200 space-y-5">
+  <!-- Generation Arrays Grid -->
+  <div id="generation_arrays" class="space-y-8">
     <% if @generation_arrays.any? %>
       <% @generation_arrays.each do |generation_array| %>
-        <div class="flex flex-col sm:flex-row justify-between items-center pb-5 sm:pb-0">
-          <% sample_image = generation_array.generations.joins(:image_attachment).sample %>
-          <% if sample_image.present? %>
-            <%= image_tag rails_blob_path(sample_image.image.variant(:thumb), disposition: "attachment", only_path: true), class: "w-[128px] h-[128px] object-cover rounded mx-4" %>
-          <% end %>
-          <%= render generation_array %>
-          <div class="w-full sm:w-auto flex flex-col sm:flex-row space-x-2 space-y-2">
-            <%= link_to "Show", generation_array, class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-            <%= button_to "Destroy", generation_array, method: :delete, class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 text-white bg-red-600 hover:bg-red-500 font-medium cursor-pointer", data: { turbo_confirm: "Are you sure?" } %>
+        <div class="card-warm p-6 hover:scale-[1.02] transition-transform duration-300">
+          <div class="flex flex-col lg:flex-row gap-6">
+            <!-- Preview Images -->
+            <div class="lg:w-1/3">
+              <% sample_images = generation_array.generations.joins(:image_attachment).limit(4) %>
+              <% if sample_images.any? %>
+                <div class="grid grid-cols-2 gap-2">
+                  <% sample_images.each do |generation| %>
+                    <div class="image-card">
+                      <%= image_tag rails_blob_path(generation.image.variant(:thumb), disposition: "attachment", only_path: true), 
+                          class: "w-full h-24 object-cover" %>
+                    </div>
+                  <% end %>
+                  <% if generation_array.generations.count > 4 %>
+                    <div class="bg-gradient-to-br from-orange-100 to-amber-100 rounded-xl flex items-center justify-center">
+                      <span class="text-orange-700 font-medium text-sm">+<%= generation_array.generations.count - 4 %> more</span>
+                    </div>
+                  <% end %>
+                </div>
+              <% else %>
+                <div class="bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl h-48 flex items-center justify-center">
+                  <div class="text-center">
+                    <div class="loading-spinner mx-auto mb-2"></div>
+                    <p class="text-gray-500 text-sm">Generating...</p>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+
+            <!-- Content -->
+            <div class="lg:w-2/3 flex flex-col justify-between">
+              <div>
+                <div class="flex items-start justify-between mb-4">
+                  <div>
+                    <h3 class="heading-font text-2xl font-semibold text-gray-800 mb-2">
+                      <%= truncate(generation_array.prompt, length: 80) %>
+                    </h3>
+                    <% if generation_array.negative_prompt.present? %>
+                      <p class="text-gray-600 text-sm mb-3">
+                        <span class="font-medium">Avoiding:</span> <%= truncate(generation_array.negative_prompt, length: 60) %>
+                      </p>
+                    <% end %>
+                  </div>
+                  <div class="flex flex-wrap gap-2">
+                    <span class="badge badge-warm"><%= generation_array.image_model.name %></span>
+                    <span class="badge badge-sage"><%= generation_array.generations.count %> images</span>
+                  </div>
+                </div>
+
+                <!-- Style Tags -->
+                <% if generation_array.selected_styles.present? && generation_array.selected_styles.any? %>
+                  <div class="mb-4">
+                    <p class="text-sm font-medium text-gray-700 mb-2">Selected Styles:</p>
+                    <div class="flex flex-wrap gap-1">
+                      <% generation_array.selected_styles.first(6).each do |style| %>
+                        <span class="badge badge-rose text-xs"><%= style %></span>
+                      <% end %>
+                      <% if generation_array.selected_styles.count > 6 %>
+                        <span class="badge badge-rose text-xs">+<%= generation_array.selected_styles.count - 6 %> more</span>
+                      <% end %>
+                    </div>
+                  </div>
+                <% else %>
+                  <div class="mb-4">
+                    <span class="badge badge-sage text-xs">All available styles</span>
+                  </div>
+                <% end %>
+
+                <!-- Technical Details -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm text-gray-600">
+                  <div>
+                    <span class="font-medium">CFG Scale:</span> <%= generation_array.cfg_scale %>
+                  </div>
+                  <div>
+                    <span class="font-medium">Steps:</span> <%= generation_array.steps %>
+                  </div>
+                  <div>
+                    <span class="font-medium">LoRA:</span> <%= generation_array.lora_strength %>%
+                  </div>
+                  <div>
+                    <span class="font-medium">Seed:</span> <%= generation_array.seed.to_s.first(8) %>...
+                  </div>
+                </div>
+              </div>
+
+              <!-- Actions -->
+              <div class="flex flex-wrap gap-3 mt-6">
+                <%= link_to generation_array, class: "btn-secondary flex-1 text-center" do %>
+                  <span>View Gallery</span>
+                <% end %>
+                <%= button_to generation_array, method: :delete, 
+                    class: "btn-danger", 
+                    data: { turbo_confirm: "Are you sure you want to delete this generation array and all its images?" } do %>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                  </svg>
+                <% end %>
+              </div>
+            </div>
           </div>
         </div>
       <% end %>
     <% else %>
-      <p class="text-center my-10">No generation arrays found.</p>
+      <!-- Empty State -->
+      <div class="text-center py-16">
+        <div class="w-24 h-24 bg-gradient-to-br from-orange-200 to-amber-200 rounded-full flex items-center justify-center mx-auto mb-6">
+          <svg class="w-12 h-12 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+          </svg>
+        </div>
+        <h3 class="heading-font text-2xl font-semibold text-gray-800 mb-3">Start Your Creative Journey</h3>
+        <p class="text-gray-600 mb-6 max-w-md mx-auto">
+          No generation arrays yet. Create your first AI art collection and explore the endless possibilities of creative expression.
+        </p>
+        <%= link_to new_generation_array_path, class: "btn-primary inline-flex items-center space-x-2" do %>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+          </svg>
+          <span>Create Your First Array</span>
+        <% end %>
+      </div>
     <% end %>
   </div>
 </div>

@@ -1,9 +1,23 @@
-<% content_for :title, "New generation array" %>
+<% content_for :title, "Create New Art Collection" %>
 
-<div class="md:w-2/3 w-full">
-  <h1 class="font-bold text-4xl">New generation array</h1>
+<div class="w-full">
+  <!-- Header -->
+  <div class="text-center mb-12">
+    <div class="flex items-center justify-center mb-4">
+      <%= link_to generation_arrays_path, class: "text-orange-600 hover:text-orange-700 mr-4 transition-colors" do %>
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+      <% end %>
+      <h1 class="heading-font text-5xl md:text-6xl font-bold bg-gradient-to-r from-orange-600 via-amber-600 to-orange-500 bg-clip-text text-transparent">
+        Create New Collection
+      </h1>
+    </div>
+    <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+      Transform your creative vision into stunning AI-generated artwork. Choose your style, set your parameters, and watch your imagination come to life.
+    </p>
+  </div>
 
+  <!-- Form -->
   <%= render "form", generation_array: @generation_array %>
-
-  <%= link_to "Back to generation arrays", generation_arrays_path, class: "w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
 </div>

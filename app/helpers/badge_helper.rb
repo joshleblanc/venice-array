@@ -9,7 +9,11 @@ module BadgeHelper
     blue: "bg-blue-50 text-blue-700 inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-400 dark:inset-ring-blue-400/30",
     indigo: "bg-indigo-50 text-indigo-700 inset-ring-indigo-700/10 dark:bg-indigo-400/10 dark:text-indigo-400 dark:inset-ring-indigo-400/30",
     purple: "bg-purple-50 text-purple-700 inset-ring-purple-700/10 dark:bg-purple-400/10 dark:text-purple-400 dark:inset-ring-purple-400/30",
-    pink: "bg-pink-50 text-pink-700 inset-ring-pink-700/10 dark:bg-pink-400/10 dark:text-pink-400 dark:inset-ring-pink-400/20"
+    pink: "bg-pink-50 text-pink-700 inset-ring-pink-700/10 dark:bg-pink-400/10 dark:text-pink-400 dark:inset-ring-pink-400/20",
+    # New warm color variants
+    warm: "bg-gradient-to-r from-orange-100 to-amber-100 text-orange-800 border border-orange-200",
+    sage: "bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 border border-green-200",
+    rose: "bg-gradient-to-r from-pink-100 to-rose-100 text-pink-800 border border-pink-200"
   }
   def badge(color = :gray, &blk)
     tag.span class: "#{BadgeHelper::BADGE_CLASSES} #{COLOR_CLASSES[color.to_sym]}", &blk

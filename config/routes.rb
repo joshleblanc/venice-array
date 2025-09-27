@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
-  # Root directs authenticated users to the generation array form
-  root to: "generation_arrays#new"
+  # Root directs authenticated users to their gallery
+  root to: "generation_arrays#index"
 
   # User registration
   resources :users, only: [ :new, :create ]

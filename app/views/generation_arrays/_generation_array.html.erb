@@ -1,24 +1,74 @@
-<div id="<%= dom_id generation_array %>" class="w-full sm:w-auto my-5 space-y-5">
-
-  <div>
-    <strong class="block font-medium mb-1">Prompt:</strong>
-    <%= generation_array.prompt %>
+<div id="<%= dom_id generation_array %>" class="w-full">
+  <!-- Main Prompt -->
+  <div class="mb-6">
+    <h3 class="heading-font text-2xl font-semibold text-gray-800 mb-3">
+      "<%= generation_array.prompt %>"
+    </h3>
+    <% if generation_array.negative_prompt.present? %>
+      <p class="text-gray-600 italic">
+        <span class="font-medium">Avoiding:</span> <%= generation_array.negative_prompt %>
+      </p>
+    <% end %>
   </div>
-  <% if generation_array.negative_prompt.present? %>
-    <div>
-      <strong class="block font-medium mb-1">Negative prompt:</strong>
-      <%= generation_array.negative_prompt %>
-    </div>
-  <% end %>
 
-  <%= badge("pink") { generation_array.image_model.name } %>
-  <%= badge("purple") { generation_array.seed.to_s }%>
-  <% if generation_array.safe_mode? %>
-    <%= badge("red") { "safe mode off" }%>
-  <% else %>
-    <%= badge("green") { "safe mode on" } %>
-  <% end %>
-  <%= badge("yellow") { "cfg scale: #{generation_array.cfg_scale}" } %>
-  <%= badge("yellow") { "lora strength: #{generation_array.lora_strength}" } %>
-  <%= badge("yellow") { "steps: #{generation_array.steps}" } %>
+  <!-- Model and Settings -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+    <div>
+      <h4 class="font-semibold text-gray-700 mb-3">Model & Settings</h4>
+      <div class="space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-gray-600">Model:</span>
+          <span class="badge badge-warm"><%= generation_array.image_model.name %></span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-gray-600">CFG Scale:</span>
+          <span class="font-medium text-gray-800"><%= generation_array.cfg_scale %></span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-gray-600">Steps:</span>
+          <span class="font-medium text-gray-800"><%= generation_array.steps %></span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-gray-600">LoRA Strength:</span>
+          <span class="font-medium text-gray-800"><%= generation_array.lora_strength %>%</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h4 class="font-semibold text-gray-700 mb-3">Generation Info</h4>
+      <div class="space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-gray-600">Seed:</span>
+          <span class="font-mono text-sm text-gray-800"><%= generation_array.seed %></span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-gray-600">Safe Mode:</span>
+          <% if generation_array.safe_mode? %>
+            <span class="badge badge-sage">Enabled</span>
+          <% else %>
+            <span class="badge badge-rose">Disabled</span>
+          <% end %>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-gray-600">Created:</span>
+          <span class="text-gray-800"><%= generation_array.created_at.strftime("%B %d, %Y") %></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Selected Styles -->
+  <div>
+    <h4 class="font-semibold text-gray-700 mb-3">Style Selection</h4>
+    <% if generation_array.selected_styles.present? && generation_array.selected_styles.any? %>
+      <div class="flex flex-wrap gap-2">
+        <% generation_array.selected_styles.each do |style| %>
+          <span class="badge badge-rose"><%= style %></span>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="text-gray-600 italic">All available styles selected</p>
+    <% end %>
+  </div>
 </div>

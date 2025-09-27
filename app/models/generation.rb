@@ -5,6 +5,6 @@ class Generation < ApplicationRecord
   belongs_to :generation_array
 
   has_one_attached :image do
-    it.variant :thumb, resize_to_limit: [ 128, 128 ], preprocessed: true
+    it.variant :thumb, resize_to_limit: [ 256, 256 ], preprocessed: true
   end
 end

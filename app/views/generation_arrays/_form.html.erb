@@ -1,91 +1,184 @@
-<%= form_with(model: generation_array, class: "contents") do |form| %>
-  <% if generation_array.errors.any? %>
-    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
-      <h2><%= pluralize(generation_array.errors.count, "error") %> prohibited this generation_array from being saved:</h2>
+<div class="max-w-4xl mx-auto">
+  <%= form_with(model: generation_array, class: "space-y-8") do |form| %>
+    <% if generation_array.errors.any? %>
+      <div id="error_explanation" class="bg-gradient-to-r from-red-100 to-pink-100 border border-red-200 text-red-700 px-6 py-4 rounded-xl shadow-sm">
+        <div class="flex items-center mb-3">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <h3 class="font-semibold">Please fix the following errors:</h3>
+        </div>
+        <ul class="list-disc ml-6 space-y-1">
+          <% generation_array.errors.each do |error| %>
+            <li><%= error.full_message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
 
-      <ul class="list-disc ml-6">
-        <% generation_array.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
+    <!-- Main Prompt Section -->
+    <div class="card p-6">
+      <h3 class="heading-font text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+        <svg class="w-6 h-6 mr-3 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+        </svg>
+        Creative Vision
+      </h3>
+      
+      <div class="space-y-6">
+        <div>
+          <%= form.label :prompt, "Describe your vision", class: "form-label" %>
+          <%= form.text_area :prompt, 
+              placeholder: "A serene landscape with mountains and a lake at sunset...", 
+              rows: 3,
+              class: ["form-input resize-none", {"border-red-300 focus:ring-red-300 focus:border-red-400": generation_array.errors[:prompt].any?}] %>
+          <p class="text-sm text-gray-500 mt-1">Be descriptive and specific for better results</p>
+        </div>
+
+        <div>
+          <%= form.label :negative_prompt, "What to avoid (optional)", class: "form-label" %>
+          <%= form.text_area :negative_prompt, 
+              placeholder: "blurry, low quality, distorted...", 
+              rows: 2,
+              class: ["form-input resize-none", {"border-red-300 focus:ring-red-300 focus:border-red-400": generation_array.errors[:negative_prompt].any?}] %>
+          <p class="text-sm text-gray-500 mt-1">Specify elements you don't want in your images</p>
+        </div>
+      </div>
     </div>
+
+    <!-- Model and Technical Settings -->
+    <div class="card p-6">
+      <h3 class="heading-font text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+        <svg class="w-6 h-6 mr-3 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+        </svg>
+        Technical Settings
+      </h3>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <%= form.label :image_model_id, "AI Model", class: "form-label" %>
+          <%= form.collection_select :image_model_id, @image_models, :id, :name, 
+              { prompt: "Choose your AI model" },
+              class: ["form-input", {"border-red-300 focus:ring-red-300 focus:border-red-400": generation_array.errors[:image_model_id].any?}] %>
+          <p class="text-sm text-gray-500 mt-1">Different models excel at different styles</p>
+        </div>
+
+        <div>
+          <%= form.label :cfg_scale, "Creativity Scale (1-20)", class: "form-label" %>
+          <%= form.number_field :cfg_scale, 
+              min: 1, max: 20, step: 0.5,
+              class: ["form-input", {"border-red-300 focus:ring-red-300 focus:border-red-400": generation_array.errors[:cfg_scale].any?}] %>
+          <p class="text-sm text-gray-500 mt-1">Higher values follow your prompt more closely</p>
+        </div>
+
+        <div>
+          <%= form.label :steps, "Quality Steps", class: "form-label" %>
+          <%= form.number_field :steps, 
+              class: ["form-input", {"border-red-300 focus:ring-red-300 focus:border-red-400": generation_array.errors[:steps].any?}] %>
+          <p class="text-sm text-gray-500 mt-1">More steps = higher quality but slower generation</p>
+        </div>
+
+        <div>
+          <%= form.label :lora_strength, "Style Strength (0-100%)", class: "form-label" %>
+          <%= form.number_field :lora_strength, 
+              min: 0, max: 100,
+              class: ["form-input", {"border-red-300 focus:ring-red-300 focus:border-red-400": generation_array.errors[:lora_strength].any?}] %>
+          <p class="text-sm text-gray-500 mt-1">How strongly to apply the selected style</p>
+        </div>
+      </div>
+
+      <div class="mt-6 flex items-center">
+        <%= form.check_box :safe_mode, class: "w-5 h-5 text-orange-600 bg-white border-orange-300 rounded focus:ring-orange-500 focus:ring-2" %>
+        <%= form.label :safe_mode, "Enable Safe Mode", class: "ml-3 text-sm font-medium text-gray-700" %>
+        <p class="ml-3 text-sm text-gray-500">Filters out potentially inappropriate content</p>
+      </div>
+    </div>
+
+    <!-- Style Selection Section -->
+    <div class="card p-6">
+      <h3 class="heading-font text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+        <svg class="w-6 h-6 mr-3 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a4 4 0 004-4V5z"></path>
+        </svg>
+        Artistic Styles
+      </h3>
+
+      <div class="mb-6">
+        <div class="flex flex-wrap gap-3 mb-4">
+          <button type="button" onclick="selectAllStyles()" class="btn-secondary text-sm">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Select All
+          </button>
+          <button type="button" onclick="deselectAllStyles()" class="btn-secondary text-sm">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+            Clear All
+          </button>
+          <button type="button" onclick="selectPopularStyles()" class="btn-secondary text-sm">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+            </svg>
+            Popular Styles
+          </button>
+        </div>
+
+        <div class="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-6 border border-orange-200/50">
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-h-64 overflow-y-auto">
+            <% @available_styles.each do |style| %>
+              <label class="flex items-center space-x-3 p-3 rounded-lg hover:bg-white/60 transition-colors cursor-pointer">
+                <%= check_box_tag "generation_array[selected_styles][]", style, 
+                    generation_array.selected_styles&.include?(style), 
+                    class: "style-checkbox w-4 h-4 text-orange-600 bg-white border-orange-300 rounded focus:ring-orange-500 focus:ring-2" %>
+                <span class="text-sm text-gray-700 hover:text-gray-900 font-medium"><%= style %></span>
+              </label>
+            <% end %>
+          </div>
+          <div class="mt-4 p-3 bg-white/60 rounded-lg">
+            <p class="text-sm text-gray-600 flex items-center">
+              <svg class="w-4 h-4 mr-2 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <strong>Tip:</strong> Leave all unchecked to generate all available styles, or select specific ones for a curated collection.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Submit Section -->
+    <div class="text-center">
+      <%= form.submit "Create Art Collection", class: "btn-primary text-lg px-8 py-4" %>
+      <p class="text-sm text-gray-500 mt-3">This will generate images for all selected styles</p>
+    </div>
+
   <% end %>
+</div>
 
-  <div class="my-5">
-    <%= form.label :prompt %>
-    <%= form.text_field :prompt, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": generation_array.errors[:prompt].none?, "border-red-400 focus:outline-red-600": generation_array.errors[:prompt].any?}] %>
-  </div>
+<script>
+  const popularStyles = ['Photographic', 'Digital Art', 'Anime', 'Cinematic', 'Fantasy Art', 'Abstract', 'Watercolor', 'Oil Painting'];
+  
+  function selectAllStyles() {
+    document.querySelectorAll('.style-checkbox').forEach(checkbox => {
+      checkbox.checked = true;
+    });
+  }
+  
+  function deselectAllStyles() {
+    document.querySelectorAll('.style-checkbox').forEach(checkbox => {
+      checkbox.checked = false;
+    });
+  }
+  
+  function selectPopularStyles() {
+    document.querySelectorAll('.style-checkbox').forEach(checkbox => {
+      checkbox.checked = popularStyles.includes(checkbox.value);
+    });
+  }
+</script>
 
-  <div class="my-5">
-    <%= form.label :image_model_id, "Model" %>
-    <%= form.collection_select :image_model_id, @image_models, :id, :name, 
-      { prompt: "Select a model" },
-      class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": generation_array.errors[:image_model_id].none?, "border-red-400 focus:outline-red-600": generation_array.errors[:image_model_id].any?}] %>
-  </div>
 
-  <div class="my-5">
-    <%= form.label :cfg_scale %>
-    <%= form.text_field :cfg_scale, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": generation_array.errors[:cfg_scale].none?, "border-red-400 focus:outline-red-600": generation_array.errors[:cfg_scale].any?}] %>
-  </div>
-
-  <div class="my-5">
-    <%= form.label :lora_strength %>
-    <%= form.number_field :lora_strength, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": generation_array.errors[:lora_strength].none?, "border-red-400 focus:outline-red-600": generation_array.errors[:lora_strength].any?}] %>
-  </div>
-
-  <div class="my-5">
-    <%= form.label :negative_prompt %>
-    <%= form.text_field :negative_prompt, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": generation_array.errors[:negative_prompt].none?, "border-red-400 focus:outline-red-600": generation_array.errors[:negative_prompt].any?}] %>
-  </div>
-
-  <div class="my-5 flex items-center gap-2">
-    <%= form.label :safe_mode %>
-    <%= form.checkbox :safe_mode, class: ["block shadow-sm rounded-md border order-first h-5 w-5", {"border-gray-400 focus:outline-blue-600": generation_array.errors[:safe_mode].none?, "border-red-400 focus:outline-red-600": generation_array.errors[:safe_mode].any?}] %>
-  </div>
-
-  <div class="my-5">
-    <%= form.label :steps %>
-    <%= form.number_field :steps, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": generation_array.errors[:steps].none?, "border-red-400 focus:outline-red-600": generation_array.errors[:steps].any?}] %>
-  </div>
-
-  <div class="my-5">
-    <%= form.label :selected_styles, "Select Styles to Generate" %>
-    <div class="mt-2 max-h-64 overflow-y-auto border border-gray-300 rounded-md p-3 bg-gray-50">
-      <div class="mb-3 flex gap-2">
-        <button type="button" onclick="selectAllStyles()" class="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-500">Select All</button>
-        <button type="button" onclick="deselectAllStyles()" class="px-3 py-1 bg-gray-600 text-white text-sm rounded hover:bg-gray-500">Deselect All</button>
-      </div>
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-        <% @available_styles.each do |style| %>
-          <label class="flex items-center space-x-2 text-sm">
-            <%= check_box_tag "generation_array[selected_styles][]", style, 
-                generation_array.selected_styles&.include?(style), 
-                class: "style-checkbox rounded border-gray-300 text-blue-600 focus:ring-blue-500" %>
-            <span class="text-gray-700"><%= style %></span>
-          </label>
-        <% end %>
-      </div>
-      <p class="text-xs text-gray-500 mt-2">
-        Leave all unchecked to generate all available styles (default behavior)
-      </p>
-    </div>
-  </div>
-
-  <script>
-    function selectAllStyles() {
-      document.querySelectorAll('.style-checkbox').forEach(checkbox => {
-        checkbox.checked = true;
-      });
-    }
-    
-    function deselectAllStyles() {
-      document.querySelectorAll('.style-checkbox').forEach(checkbox => {
-        checkbox.checked = false;
-      });
-    }
-  </script>
-
-  <div class="inline">
-    <%= form.submit class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
-  </div>
-<% end %>

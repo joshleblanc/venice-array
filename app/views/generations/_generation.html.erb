@@ -1,14 +1,25 @@
-<div id="<%= dom_id generation %>" class="w-full sm:w-auto my-1 space-y-1 mx-1 space-x-1" data-src="<%= rails_blob_path(generation.image, disposition: "attachment", only_path: true) if generation.image.attached? %>">
+<div id="<%= dom_id generation %>" class="image-card" data-src="<%= rails_blob_path(generation.image, disposition: "attachment", only_path: true) if generation.image.attached? %>">
   <% if generation.image.attached? %>
-    <%= link_to generation.image  do %>
-      <%= image_tag rails_blob_path(generation.image.variant(:thumb), disposition: "attachment", only_path: true), class: "w-[128px] h-[128px] object-cover rounded" %>
+    <%= link_to generation.image, class: "block relative" do %>
+      <%= image_tag rails_blob_path(generation.image.variant(:thumb), disposition: "attachment", only_path: true), 
+          class: "w-full h-32 object-cover",
+          loading: "lazy" %>
+      
+      <!-- Overlay with style name -->
+      <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300">
+        <div class="absolute bottom-2 left-2 right-2">
+          <p class="text-white text-xs font-medium truncate">
+            <%= generation.style_preset %>
+          </p>
+        </div>
+      </div>
     <% end %>
   <% else %>
-    <div class="w-[128px] h-[128px] flex items-center justify-center bg-gray-100 rounded">
-      <div class="h-6 w-6 border-4 border-gray-300 border-t-blue-600 rounded-full animate-spin" aria-label="Generating..."></div>
+    <!-- Loading state with warm colors -->
+    <div class="bg-gradient-to-br from-orange-100 to-amber-100 rounded-xl h-32 flex flex-col items-center justify-center">
+      <div class="loading-spinner mb-2"></div>
+      <p class="text-orange-700 text-xs font-medium"><%= generation.style_preset %></p>
+      <p class="text-orange-600 text-xs">Creating magic...</p>
     </div>
   <% end %>
-  <div class="text-xs">
-    <%= generation.style_preset %>
-  </div>
 </div>
