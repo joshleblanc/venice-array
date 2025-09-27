@@ -1,5 +1,6 @@
 class GenerationArraysController < ApplicationController
   before_action :set_generation_array, only: %i[ show destroy ]
+  before_action :set_models, only: %i[ new create ]
   before_action :set_styles, only: %i[ new create ]
 
   # GET /generation_arrays or /generation_arrays.json
@@ -54,6 +55,11 @@ class GenerationArraysController < ApplicationController
       authorize(@generation_array)
     end
 
+    # Fetch models for dropdown from Venice API
+    def set_models
+      @image_models = ImageModel.all
+    end
+
     # Fetch styles for selection from Venice API
     def set_styles
       user = Current.user
@@ -62,6 +68,6 @@ class GenerationArraysController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def generation_array_params
-      params.expect(generation_array: [ :prompt, :model, :cfg_scale, :lora_strength, :negative_prompt, :safe_mode, :seed, :steps, selected_styles: [] ])
+      params.expect(generation_array: [ :prompt, :image_model_id, :cfg_scale, :lora_strength, :negative_prompt, :safe_mode, :seed, :steps, selected_styles: [] ])
     end
 end

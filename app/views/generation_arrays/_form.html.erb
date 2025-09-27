@@ -17,11 +17,10 @@
   </div>
 
   <div class="my-5">
-    <%= form.label :model %>
-    <%= form.select :model,
-      options_from_collection_for_select(ImageModel.all, :external_id, :name, generation_array.model),
-      { include_blank: "Select a model" },
-      class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": generation_array.errors[:model].none?, "border-red-400 focus:outline-red-600": generation_array.errors[:model].any?}] %>
+    <%= form.label :image_model_id, "Model" %>
+    <%= form.collection_select :image_model_id, @image_models, :id, :name, 
+      { prompt: "Select a model" },
+      class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": generation_array.errors[:image_model_id].none?, "border-red-400 focus:outline-red-600": generation_array.errors[:image_model_id].any?}] %>
   </div>
 
   <div class="my-5">

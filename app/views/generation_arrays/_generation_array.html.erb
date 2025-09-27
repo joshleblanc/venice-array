@@ -11,7 +11,7 @@
     </div>
   <% end %>
 
-  <%= badge("pink") { generation_array.model } %>
+  <%= badge("pink") { generation_array.image_model.name } %>
   <%= badge("purple") { generation_array.seed.to_s }%>
   <% if generation_array.safe_mode? %>
     <%= badge("red") { "safe mode off" }%>

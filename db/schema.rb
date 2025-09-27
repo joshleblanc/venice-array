@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_27_113116) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_27_114424) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -41,7 +41,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_27_113116) do
 
   create_table "generation_arrays", force: :cascade do |t|
     t.string "prompt"
-    t.string "model"
     t.float "cfg_scale"
     t.integer "lora_strength"
     t.string "negative_prompt"
@@ -52,6 +51,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_27_113116) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "selected_styles"
+    t.integer "image_model_id", null: false
+    t.index ["image_model_id"], name: "index_generation_arrays_on_image_model_id"
     t.index ["user_id"], name: "index_generation_arrays_on_user_id"
   end
 
@@ -92,6 +93,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_27_113116) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "generation_arrays", "image_models"
   add_foreign_key "generation_arrays", "users"
   add_foreign_key "generations", "generation_arrays"
   add_foreign_key "generations", "users"

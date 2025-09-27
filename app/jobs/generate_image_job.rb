@@ -11,7 +11,7 @@ class GenerateImageJob < ApplicationJob
     ga = generation.generation_array
 
     body = {
-      model: ga.model,
+      model: ga.image_model.external_id,
       prompt: ga.prompt,
       negative_prompt: ga.negative_prompt,
       cfg_scale: ga.cfg_scale,
