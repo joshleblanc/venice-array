@@ -5,7 +5,7 @@ class GenerationArraysController < ApplicationController
 
   # GET /generation_arrays or /generation_arrays.json
   def index
-    @generation_arrays = policy_scope(GenerationArray.all)
+    @generation_arrays = policy_scope(GenerationArray.all.order(created_at: :desc))
     authorize(@generation_arrays)
   end
 
