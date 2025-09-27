@@ -21,17 +21,4 @@
   <%= badge("yellow") { "cfg scale: #{generation_array.cfg_scale}" } %>
   <%= badge("yellow") { "lora strength: #{generation_array.lora_strength}" } %>
   <%= badge("yellow") { "steps: #{generation_array.steps}" } %>
-
-  <div>
-    <strong class="block font-medium mb-1">Selected Styles:</strong>
-    <% if generation_array.selected_styles.present? && generation_array.selected_styles.any? %>
-      <div class="flex flex-wrap gap-1 mt-1">
-        <% generation_array.selected_styles.each do |style| %>
-          <span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded"><%= style %></span>
-        <% end %>
-      </div>
-    <% else %>
-      <span class="text-gray-500 text-sm">All available styles</span>
-    <% end %>
-  </div>
 </div>
