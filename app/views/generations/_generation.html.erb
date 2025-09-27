@@ -1,9 +1,15 @@
-<div id="<%= dom_id generation %>" class="image-card" data-src="<%= rails_blob_path(generation.image, disposition: "attachment", only_path: true) if generation.image.attached? %>">
+<div id="<%= dom_id generation %>" class="image-card">
   <% if generation.image.attached? %>
-    <%= link_to generation.image, class: "block relative" do %>
+    <%= link_to rails_blob_path(generation.image, disposition: "attachment", only_path: true), 
+        class: "block relative lightgallery-item",
+        data: { 
+          src: rails_blob_path(generation.image, disposition: "attachment", only_path: true),
+          sub_html: "<h4>#{generation.style_preset}</h4><p>AI Generated Image</p>"
+        } do %>
       <%= image_tag rails_blob_path(generation.image.variant(:thumb), disposition: "attachment", only_path: true), 
           class: "w-full h-32 object-cover",
-          loading: "lazy" %>
+          loading: "lazy",
+          alt: generation.style_preset %>
       
       <!-- Overlay with style name -->
       <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300">
