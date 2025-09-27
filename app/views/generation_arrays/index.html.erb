@@ -14,6 +14,10 @@
     <% if @generation_arrays.any? %>
       <% @generation_arrays.each do |generation_array| %>
         <div class="flex flex-col sm:flex-row justify-between items-center pb-5 sm:pb-0">
+          <% sample_image = generation_array.generations.joins(:image_attachment).sample %>
+          <% if sample_image.present? %>
+            <%= image_tag rails_blob_path(sample_image.image.variant(:thumb), disposition: "attachment", only_path: true), class: "w-[128px] h-[128px] object-cover rounded mx-4" %>
+          <% end %>
           <%= render generation_array %>
           <div class="w-full sm:w-auto flex flex-col sm:flex-row space-x-2 space-y-2">
             <%= link_to "Show", generation_array, class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
