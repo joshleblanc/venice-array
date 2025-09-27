@@ -121,7 +121,7 @@ export default class extends Controller {
       // Debounce reinitalization
       clearTimeout(this.reinitializeTimeout)
       this.reinitializeTimeout = setTimeout(() => {
-        this.initializeLightGallery()
+        this.refresh()
       }, 200)
     }
   }
@@ -129,7 +129,7 @@ export default class extends Controller {
   // Manual refresh method that can be called from outside
   refresh() {
     console.log('Manual LightGallery refresh requested')
-    this.initializeLightGallery()
+    this.lightGallery.refresh()
   }
 
   // Force cleanup and reinitialize (for debugging)
