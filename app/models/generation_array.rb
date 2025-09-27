@@ -1,6 +1,4 @@
 class GenerationArray < ApplicationRecord
-  broadcasts_refreshes
-
   belongs_to :user
   belongs_to :image_model
 
