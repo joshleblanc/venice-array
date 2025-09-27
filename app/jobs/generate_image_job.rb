@@ -16,13 +16,16 @@ class GenerateImageJob < ApplicationJob
       negative_prompt: ga.negative_prompt,
       cfg_scale: ga.cfg_scale,
       steps: ga.steps,
-      # seed: ga.seed,
       safe_mode: ga.safe_mode,
       lora_strength: ga.lora_strength,
       style_preset: generation.style_preset,
       width: 1024,
       height: 1024
     }.compact
+
+    if ga.seed.present?
+      body[:seed] = ga.seed
+    end
 
     response = Faraday.new(url: "https://api.venice.ai/api/v1/image/generate") do |faraday|
       faraday.request :json

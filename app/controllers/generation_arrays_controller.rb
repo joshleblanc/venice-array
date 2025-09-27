@@ -24,6 +24,11 @@ class GenerationArraysController < ApplicationController
   def create
     @generation_array = GenerationArray.new(generation_array_params)
     @generation_array.user = Current.user
+
+    if generation_array_params[:seed].empty?
+      @generation_array.seed = nil
+    end
+
     authorize(@generation_array)
 
     respond_to do |format|

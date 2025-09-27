@@ -1,9 +1,12 @@
 <div id="<%= dom_id generation_array %>" class="w-full">
   <!-- Main Prompt -->
   <div class="mb-6">
-    <h3 class="heading-font text-2xl font-semibold text-gray-800 mb-3">
-      "<%= generation_array.prompt %>"
-    </h3>
+    <div data-controller="clipboard" data-clipboard-success-content-value="Copied!">
+      <h3 class="heading-font text-2xl font-semibold text-gray-800 mb-3" data-clipboard-target="source">
+        <%= generation_array.prompt %>
+      </h3>
+      <button class="cursor-pointer" type="button" data-action="clipboard#copy" data-clipboard-target="button">Copy Prompt</button>
+    </div>
     <% if generation_array.negative_prompt.present? %>
       <p class="text-gray-600 italic">
         <span class="font-medium">Avoiding:</span> <%= generation_array.negative_prompt %>

@@ -16,6 +16,7 @@ class GenerationArray < ApplicationRecord
   end
 
   after_initialize do
+    next if persisted?
     self.image_model ||= ImageModel.find_by(external_id: FetchTraitsJob.perform_now["default"])
     self.cfg_scale ||= 5
     self.lora_strength ||= 75

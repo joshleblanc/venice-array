@@ -81,6 +81,13 @@
         </div>
 
         <div>
+          <%= form.label :steps, "Seed", class: "form-label" %>
+          <%= form.number_field :seed, 
+              class: ["form-input", {"border-red-300 focus:ring-red-300 focus:border-red-400": generation_array.errors[:seed].any?}] %>
+          <p class="text-sm text-gray-500 mt-1">The seed to use for each image - remove for random</p>
+        </div>
+
+        <div>
           <%= form.label :lora_strength, "Style Strength (0-100%)", class: "form-label" %>
           <%= form.number_field :lora_strength, 
               min: 0, max: 100,
@@ -125,6 +132,12 @@
             </svg>
             Popular Styles
           </button>
+          <button type="button" onclick="selectRandomStyles()" class="btn-primary text-sm" id="random-styles-btn">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+            </svg>
+            <span id="random-btn-text">Random Styles</span>
+          </button>
         </div>
 
         <div class="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-6 border border-orange-200/50">
@@ -138,13 +151,23 @@
               </label>
             <% end %>
           </div>
-          <div class="mt-4 p-3 bg-white/60 rounded-lg">
-            <p class="text-sm text-gray-600 flex items-center">
-              <svg class="w-4 h-4 mr-2 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-              <strong>Tip:</strong> Leave all unchecked to generate all available styles, or select specific ones for a curated collection.
-            </p>
+          <div class="mt-4 space-y-3">
+            <div class="p-3 bg-white/60 rounded-lg">
+              <p class="text-sm text-gray-600 flex items-center">
+                <svg class="w-4 h-4 mr-2 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <strong>Tip:</strong> Leave all unchecked to generate all available styles, or select specific ones for a curated collection.
+              </p>
+            </div>
+            <div class="p-3 bg-gradient-to-r from-orange-100/60 to-amber-100/60 rounded-lg border border-orange-200/50">
+              <p class="text-sm text-orange-700 flex items-center">
+                <svg class="w-4 h-4 mr-2 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                <strong>Random Styles:</strong> Click to select 5, 8, 12, or 15 random styles. Each click cycles through different amounts for variety!
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -162,23 +185,130 @@
 <script>
   const popularStyles = ['Photographic', 'Digital Art', 'Anime', 'Cinematic', 'Fantasy Art', 'Abstract', 'Watercolor', 'Oil Painting'];
   
+  // Random selection configurations
+  const randomConfigs = [
+    { count: 5, label: '5 Random' },
+    { count: 8, label: '8 Random' },
+    { count: 12, label: '12 Random' },
+    { count: 15, label: '15 Random' }
+  ];
+  
+  let currentRandomConfig = 0;
+  
   function selectAllStyles() {
     document.querySelectorAll('.style-checkbox').forEach(checkbox => {
       checkbox.checked = true;
     });
+    updateRandomButtonText();
   }
   
   function deselectAllStyles() {
     document.querySelectorAll('.style-checkbox').forEach(checkbox => {
       checkbox.checked = false;
     });
+    updateRandomButtonText();
   }
   
   function selectPopularStyles() {
     document.querySelectorAll('.style-checkbox').forEach(checkbox => {
       checkbox.checked = popularStyles.includes(checkbox.value);
     });
+    updateRandomButtonText();
   }
+  
+  function selectRandomStyles() {
+    const checkboxes = Array.from(document.querySelectorAll('.style-checkbox'));
+    const config = randomConfigs[currentRandomConfig];
+    
+    // Clear all selections first with animation
+    checkboxes.forEach(checkbox => {
+      checkbox.checked = false;
+      const label = checkbox.closest('label');
+      label.classList.remove('style-checkbox-highlight');
+    });
+    
+    // Shuffle array and select random styles
+    const shuffled = checkboxes.sort(() => 0.5 - Math.random());
+    const selectedCount = Math.min(config.count, checkboxes.length);
+    
+    // Add visual feedback during selection
+    const button = document.getElementById('random-styles-btn');
+    const buttonText = document.getElementById('random-btn-text');
+    
+    button.disabled = true;
+    button.classList.add('random-button-loading');
+    buttonText.textContent = '🎲 Selecting...';
+    
+    // Animate the selection process
+    let selectedSoFar = 0;
+    const selectionInterval = setInterval(() => {
+      if (selectedSoFar < selectedCount) {
+        const checkbox = shuffled[selectedSoFar];
+        const label = checkbox.closest('label');
+        
+        // Check the checkbox
+        checkbox.checked = true;
+        
+        // Add highlight animation
+        label.classList.add('style-checkbox-highlight');
+        
+        // Scroll into view with smooth animation
+        setTimeout(() => {
+          label.scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest'
+          });
+        }, 50);
+        
+        selectedSoFar++;
+        buttonText.textContent = `🎲 Selected ${selectedSoFar}/${selectedCount}`;
+      } else {
+        clearInterval(selectionInterval);
+        
+        // Cycle to next configuration for next click
+        currentRandomConfig = (currentRandomConfig + 1) % randomConfigs.length;
+        
+        // Reset button with success animation
+        setTimeout(() => {
+          button.disabled = false;
+          button.classList.remove('random-button-loading');
+          
+          // Show success feedback with emoji
+          buttonText.textContent = `✨ ${selectedCount} Styles Selected!`;
+          
+          // Add success pulse to button
+          button.classList.add('animate-pulse');
+          
+          setTimeout(() => {
+            button.classList.remove('animate-pulse');
+            updateRandomButtonText();
+          }, 2000);
+        }, 300);
+      }
+    }, 200); // Slightly slower for better visual effect
+  }
+  
+  function updateRandomButtonText() {
+    const buttonText = document.getElementById('random-btn-text');
+    const config = randomConfigs[currentRandomConfig];
+    const selectedCount = document.querySelectorAll('.style-checkbox:checked').length;
+    
+    if (selectedCount === 0) {
+      buttonText.textContent = `Random ${config.count}`;
+    } else {
+      buttonText.textContent = `Random ${config.count} (${selectedCount} selected)`;
+    }
+  }
+  
+  // Update button text on page load
+  document.addEventListener('DOMContentLoaded', updateRandomButtonText);
+  
+  // Update button text when checkboxes change
+  document.addEventListener('change', function(event) {
+    if (event.target.classList.contains('style-checkbox')) {
+      updateRandomButtonText();
+    }
+  });
 </script>
 
 
