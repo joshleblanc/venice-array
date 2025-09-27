@@ -32,8 +32,7 @@ export default class extends Controller {
     // Find all image links in the gallery
     const imageLinks = this.element.querySelectorAll('.lightgallery-item')
     
-    if (imageLinks.length > 0) {
-      this.lightGalleryInstance = lightGallery(this.element, {
+    this.lightGalleryInstance = lightGallery(this.element, {
         plugins: [],
         selector: '.lightgallery-item',
         download: true,
@@ -42,7 +41,6 @@ export default class extends Controller {
       })
 
       console.log(`LightGallery initialized with ${imageLinks.length} images`)
-    }
   }
 
   destroyLightGallery() {
@@ -129,7 +127,7 @@ export default class extends Controller {
   // Manual refresh method that can be called from outside
   refresh() {
     console.log('Manual LightGallery refresh requested')
-    this.lightGallery.refresh()
+    this.lightGalleryInstance.refresh()
   }
 
   // Force cleanup and reinitialize (for debugging)
