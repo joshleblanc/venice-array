@@ -18,10 +18,12 @@ class UsersController < ApplicationController
 
   def edit
     @user = Current.user
+    authorize @user
   end
 
   def update
     @user = Current.user
+    authorize @user
     if @user.update(user_params)
       redirect_to after_authentication_url, notice: "Profile updated."
     else

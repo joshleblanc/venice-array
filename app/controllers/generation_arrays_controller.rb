@@ -1,11 +1,12 @@
 class GenerationArraysController < ApplicationController
-  before_action :set_generation_array, only: %i[ show edit update destroy ]
-  before_action :set_models, only: %i[ new edit create update ]
-  before_action :set_styles, only: %i[ new edit create update ]
+  before_action :set_generation_array, only: %i[ show destroy ]
+  before_action :set_models, only: %i[ new create ]
+  before_action :set_styles, only: %i[ new create ]
 
   # GET /generation_arrays or /generation_arrays.json
   def index
-    @generation_arrays = GenerationArray.all
+    @generation_arrays = policy_scope(GenerationArray.all)
+    authorize(@generation_arrays)
   end
 
   # GET /generation_arrays/1 or /generation_arrays/1.json
@@ -15,16 +16,15 @@ class GenerationArraysController < ApplicationController
   # GET /generation_arrays/new
   def new
     @generation_array = GenerationArray.new
-  end
-
-  # GET /generation_arrays/1/edit
-  def edit
+    @generation_array.user = current_user
+    authorize(@generation_array)
   end
 
   # POST /generation_arrays or /generation_arrays.json
   def create
     @generation_array = GenerationArray.new(generation_array_params)
     @generation_array.user = Current.user
+    authorize(@generation_array)
 
     respond_to do |format|
       if @generation_array.save
@@ -33,19 +33,6 @@ class GenerationArraysController < ApplicationController
         format.json { render :show, status: :created, location: @generation_array }
       else
         format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @generation_array.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  # PATCH/PUT /generation_arrays/1 or /generation_arrays/1.json
-  def update
-    respond_to do |format|
-      if @generation_array.update(generation_array_params)
-        format.html { redirect_to @generation_array, notice: "Generation array was successfully updated.", status: :see_other }
-        format.json { render :show, status: :ok, location: @generation_array }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
         format.json { render json: @generation_array.errors, status: :unprocessable_entity }
       end
     end
@@ -65,6 +52,7 @@ class GenerationArraysController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_generation_array
       @generation_array = GenerationArray.find(params.expect(:id))
+      authorize(@generation_array)
     end
 
     # Fetch models for dropdown from Venice API
@@ -83,4 +71,4 @@ class GenerationArraysController < ApplicationController
     def generation_array_params
       params.expect(generation_array: [ :prompt, :model, :cfg_scale, :lora_strength, :negative_prompt, :safe_mode, :seed, :steps, selected_styles: [] ])
     end
-  end
+end

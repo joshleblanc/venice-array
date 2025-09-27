@@ -2,15 +2,13 @@ Rails.application.routes.draw do
   # Root directs authenticated users to the generation array form
   root to: "generation_arrays#new"
 
-  # Top-level resources (keep for now)
-  resources :generations
   # User registration
-  resources :users, only: [:new, :create]
-  resource :profile, only: [:edit, :update], controller: "users"
+  resources :users, only: [ :new, :create ]
+  resource :profile, only: [ :edit, :update ], controller: "users"
 
   # Users create a generation array, and we show its generations nested
-  resources :generation_arrays do
-    resources :generations, only: [:index]
+  resources :generation_arrays, except: [ :edit, :update ] do
+    resources :generations, only: [ :index ]
   end
   resource :session
   resources :passwords, param: :token

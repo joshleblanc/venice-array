@@ -73,3 +73,5 @@ gem "activerecord-import", "~> 2.2"
 group :production do
   gem "aws-sdk-s3", "~> 1.199"
 end
+
+gem "pundit", "~> 2.5"

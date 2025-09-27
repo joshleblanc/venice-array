@@ -1,40 +1,27 @@
 <div id="<%= dom_id generation_array %>" class="w-full sm:w-auto my-5 space-y-5">
+
   <div>
     <strong class="block font-medium mb-1">Prompt:</strong>
     <%= generation_array.prompt %>
   </div>
-  <div>
-    <strong class="block font-medium mb-1">Model:</strong>
-    <%= generation_array.model %>
-  </div>
-  <div>
-    <strong class="block font-medium mb-1">Cfg scale:</strong>
-    <%= generation_array.cfg_scale %>
-  </div>
-  <div>
-    <strong class="block font-medium mb-1">Lora strength:</strong>
-    <%= generation_array.lora_strength %>
-  </div>
-  <div>
-    <strong class="block font-medium mb-1">Negative prompt:</strong>
-    <%= generation_array.negative_prompt %>
-  </div>
-  <div>
-    <strong class="block font-medium mb-1">Safe mode:</strong>
-    <%= generation_array.safe_mode? ? "Yes" : "No" %>
-  </div>
-  <div>
-    <strong class="block font-medium mb-1">Seed:</strong>
-    <%= generation_array.seed %>
-  </div>
-  <div>
-    <strong class="block font-medium mb-1">Steps:</strong>
-    <%= generation_array.steps %>
-  </div>
-  <div>
-    <strong class="block font-medium mb-1">User:</strong>
-    <%= generation_array.user_id %>
-  </div>
+  <% if generation_array.negative_prompt.present? %>
+    <div>
+      <strong class="block font-medium mb-1">Negative prompt:</strong>
+      <%= generation_array.negative_prompt %>
+    </div>
+  <% end %>
+
+  <%= badge("pink") { generation_array.model } %>
+  <%= badge("purple") { generation_array.seed.to_s }%>
+  <% if generation_array.safe_mode? %>
+    <%= badge("red") { "safe mode off" }%>
+  <% else %>
+    <%= badge("green") { "safe mode on" } %>
+  <% end %>
+  <%= badge("yellow") { "cfg scale: #{generation_array.cfg_scale}" } %>
+  <%= badge("yellow") { "lora strength: #{generation_array.lora_strength}" } %>
+  <%= badge("yellow") { "steps: #{generation_array.steps}" } %>
+
   <div>
     <strong class="block font-medium mb-1">Selected Styles:</strong>
     <% if generation_array.selected_styles.present? && generation_array.selected_styles.any? %>
