@@ -4,5 +4,5 @@ class ApplicationJob < ActiveJob::Base
   retry_on GenerateImageJob::RateLimitError, wait: :polynomially_longer
 
   # Most jobs are safe to ignore if the underlying records are no longer available
-  # discard_on ActiveJob::DeserializationError
+  discard_on ActiveJob::DeserializationError
 end
