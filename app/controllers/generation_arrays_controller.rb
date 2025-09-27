@@ -1,6 +1,5 @@
 class GenerationArraysController < ApplicationController
   before_action :set_generation_array, only: %i[ show destroy ]
-  before_action :set_models, only: %i[ new create ]
   before_action :set_styles, only: %i[ new create ]
 
   # GET /generation_arrays or /generation_arrays.json
@@ -53,12 +52,6 @@ class GenerationArraysController < ApplicationController
     def set_generation_array
       @generation_array = GenerationArray.find(params.expect(:id))
       authorize(@generation_array)
-    end
-
-    # Fetch models for dropdown from Venice API
-    def set_models
-      user = Current.user
-      @model_options = FetchModelsJob.perform_now(user)
     end
 
     # Fetch styles for selection from Venice API

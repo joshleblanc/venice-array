@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_26_232621) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_27_113116) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -63,6 +63,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_26_232621) do
     t.datetime "updated_at", null: false
     t.index ["generation_array_id"], name: "index_generations_on_generation_array_id"
     t.index ["user_id"], name: "index_generations_on_user_id"
+  end
+
+  create_table "image_models", force: :cascade do |t|
+    t.string "external_id"
+    t.json "model_spec"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "sessions", force: :cascade do |t|
