@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/joshleblanc/solid_queue.git
-  revision: 8b0a71658e35f106eb3ca907d83b0ba60c423751
+  revision: f7b253d9be550c315e176563bf7059db701b38cc
   branch: async-mode
   specs:
     solid_queue (1.2.1)
