@@ -1,7 +1,7 @@
 class GenerationArraysController < ApplicationController
-  before_action :set_generation_array, only: %i[ show destroy ]
-  before_action :set_models, only: %i[ new create ]
-  before_action :set_styles, only: %i[ new create ]
+  before_action :set_generation_array, only: %i[ show destroy copy ]
+  before_action :set_models, only: %i[ new create copy ]
+  before_action :set_styles, only: %i[ new create copy ]
 
 
   # GET /generation_arrays or /generation_arrays.json
@@ -19,6 +19,28 @@ class GenerationArraysController < ApplicationController
     @generation_array = GenerationArray.new
     @generation_array.user = current_user
     authorize(@generation_array)
+  end
+
+  # GET /generation_arrays/1/copy
+  def copy
+    # Create a new generation array with copied settings
+    @generation_array = GenerationArray.new(
+      prompt: @generation_array.prompt,
+      negative_prompt: @generation_array.negative_prompt,
+      image_model: @generation_array.image_model,
+      cfg_scale: @generation_array.cfg_scale,
+      lora_strength: @generation_array.lora_strength,
+      safe_mode: @generation_array.safe_mode,
+      steps: @generation_array.steps,
+      selected_styles: @generation_array.selected_styles,
+      user: current_user
+    )
+    
+    # Generate a new random seed for the copy
+    @generation_array.seed = rand(0..999999999)
+    
+    authorize(@generation_array)
+    render :new
   end
 
   # POST /generation_arrays or /generation_arrays.json
