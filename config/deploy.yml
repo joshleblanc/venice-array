@@ -2,12 +2,12 @@
 service: venice_array
 
 # Name of the container image.
-image: your-user/venice_array
+image: jleb/venice_array
 
 # Deploy to these servers.
 servers:
   web:
-    - 192.168.0.1
+    - 138.197.155.169
   # job:
   #   hosts:
   #     - 192.168.0.1
@@ -19,17 +19,12 @@ servers:
 # Note: If using Cloudflare, set encryption mode in SSL/TLS setting to "Full" to enable CF-to-app encryption.
 proxy:
   ssl: true
-  host: app.example.com
-
+  host: array.jleb.dev
 # Credentials for your image host.
 registry:
-  # Specify the registry server, if you're not using Docker Hub
-  # server: registry.digitalocean.com / ghcr.io / ...
-  username: your-user
-
-  # Always use an access token rather than real password when possible.
-  password:
-    - KAMAL_REGISTRY_PASSWORD
+  server: registry.jleb.dev
+  username: admin
+  password: <%= ENV["KAMAL_REGISTRY_PASSWORD"] %>
 
 # Inject ENV variables into containers (secrets come from .kamal/secrets).
 env:
@@ -76,6 +71,7 @@ asset_path: /rails/public/assets
 # Configure the image builder.
 builder:
   arch: amd64
+  remote: ssh://root@165.227.38.242
 
   # # Build image via remote server (useful for faster amd64 builds on arm64 computers)
   # remote: ssh://docker@docker-builder-server

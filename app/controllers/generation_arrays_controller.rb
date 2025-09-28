@@ -3,6 +3,7 @@ class GenerationArraysController < ApplicationController
   before_action :set_models, only: %i[ new create ]
   before_action :set_styles, only: %i[ new create ]
 
+
   # GET /generation_arrays or /generation_arrays.json
   def index
     @generation_arrays = policy_scope(GenerationArray.all.order(created_at: :desc))
