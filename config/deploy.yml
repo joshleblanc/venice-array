@@ -24,7 +24,8 @@ proxy:
 registry:
   server: registry.jleb.dev
   username: admin
-  password: <%= ENV["KAMAL_REGISTRY_PASSWORD"] %>
+  password:
+    - KAMAL_REGISTRY_PASSWORD
 
 # Inject ENV variables into containers (secrets come from .kamal/secrets).
 env:
