@@ -22,10 +22,7 @@ proxy:
   host: array.jleb.dev
 # Credentials for your image host.
 registry:
-  server: registry.jleb.dev
-  username: admin
-  password:
-    - KAMAL_REGISTRY_PASSWORD
+  server: localhost:5555
 
 # Inject ENV variables into containers (secrets come from .kamal/secrets).
 env:
