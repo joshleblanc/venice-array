@@ -71,7 +71,7 @@ gem "image_processing", "~> 1.14"
 gem "activerecord-import", "~> 2.2"
 
 group :production do
-  gem "aws-sdk-s3", "~> 1.199"
+  gem "aws-sdk-s3", "~> 1.202"
 end
 
 gem "pundit", "~> 2.5"
