@@ -58,10 +58,7 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <div class="flex items-center justify-between">
-            <%= form.label :image_model_id, "AI Model", class: "form-label" %>
-            <%= link_to "Sync Models", sync_models_generation_arrays_path, data: { turbo_method: :post }, class: "btn-secondary text-sm" %>
-          </div>
+          <%= form.label :image_model_id, "AI Model", class: "form-label" %>
           <%= form.collection_select :image_model_id, @image_models, :id, :name, 
               { prompt: "Choose your AI model" },
               class: ["form-input", {"border-red-300 focus:ring-red-300 focus:border-red-400": generation_array.errors[:image_model_id].any?}] %>

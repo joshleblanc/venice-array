@@ -8,9 +8,6 @@ Rails.application.routes.draw do
 
   # Users create a generation array, and we show its generations nested
   resources :generation_arrays, except: [ :edit, :update ] do
-    collection do
-      post :sync_models
-    end
     member do
       get :copy
     end

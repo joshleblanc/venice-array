@@ -9,10 +9,6 @@ class GenerationArrayPolicy < ApplicationPolicy
     new?
   end
 
-  def sync_models?
-    new?
-  end
-
   class Scope < ApplicationPolicy::Scope
     # NOTE: Be explicit about which records you allow access to!
     def resolve
