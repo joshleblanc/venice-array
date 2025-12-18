@@ -76,6 +76,12 @@ class GenerationArraysController < ApplicationController
     end
   end
 
+  def sync_models
+    authorize(GenerationArray)
+    FetchModelsJob.perform_later
+    redirect_back fallback_location: new_generation_array_path, notice: "Model sync started. Refresh in a moment to see updates."
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_generation_array
