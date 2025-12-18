@@ -22,10 +22,7 @@ proxy:
   host: array.jleb.dev
 # Credentials for your image host.
 registry:
-  server: registry.jleb.dev
-  username: admin
-  password:
-    - KAMAL_REGISTRY_PASSWORD
+  server: localhost:5555
 
 # Inject ENV variables into containers (secrets come from .kamal/secrets).
 env:
@@ -75,8 +72,6 @@ asset_path: /rails/public/assets
 # Configure the image builder.
 builder:
   arch: amd64
-  remote: ssh://root@165.227.38.242
-
   # # Build image via remote server (useful for faster amd64 builds on arm64 computers)
   # remote: ssh://docker@docker-builder-server
   #
