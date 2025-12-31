@@ -48,6 +48,7 @@
         </div>
         <div class="flex items-center gap-4">
           <% if authenticated? %>
+            <span class="text-sm text-gray-600"><%= current_user.balances["USD"] %>$ | <%= current_user.balances["DIEM"] %> DIEM</span>
             <%= link_to "Profile", edit_profile_path, class: "text-gray-600 hover:text-orange-600 font-medium transition-colors duration-200" %>
             <%= button_to "Log out", session_path, method: :delete, class: "btn-secondary" %>
           <% else %>
