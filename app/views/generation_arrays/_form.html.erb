@@ -1,4 +1,6 @@
-<div class="max-w-4xl mx-auto">
+<% model_cost_data = @image_models.index_by(&:id).transform_values { |m| { "USD" => m.generation_pricing["USD"], "DIEM" => m.generation_pricing["DIEM"], "default_steps" => m.constraints.dig("steps", "default") } } %>
+
+<div class="max-w-4xl mx-auto" data-controller="generation-array-form" data-generation-array-form-model-costs-value="<%= h(model_cost_data.to_json) %>" data-generation-array-form-total-styles-value="<%= @available_styles.size %>">
   <%= form_with(model: generation_array, class: "space-y-8") do |form| %>
     <% if generation_array.errors.any? %>
       <div id="error_explanation" class="bg-gradient-to-r from-red-100 to-pink-100 border border-red-200 text-red-700 px-6 py-4 rounded-xl shadow-sm">
@@ -61,7 +63,8 @@
           <%= form.label :image_model_id, "AI Model", class: "form-label" %>
           <%= form.collection_select :image_model_id, @image_models, :id, :name, 
               { prompt: "Choose your AI model" },
-              class: ["form-input", {"border-red-300 focus:ring-red-300 focus:border-red-400": generation_array.errors[:image_model_id].any?}] %>
+              class: ["form-input", {"border-red-300 focus:ring-red-300 focus:border-red-400": generation_array.errors[:image_model_id].any?}],
+              data: { generation_array_form_target: "modelSelect", action: "change->generation-array-form#updateEstimatedCost" } %>
           <p class="text-sm text-gray-500 mt-1">Different models excel at different styles</p>
         </div>
 
@@ -76,7 +79,8 @@
         <div>
           <%= form.label :steps, "Quality Steps", class: "form-label" %>
           <%= form.number_field :steps, 
-              class: ["form-input", {"border-red-300 focus:ring-red-300 focus:border-red-400": generation_array.errors[:steps].any?}] %>
+              class: ["form-input", {"border-red-300 focus:ring-red-300 focus:border-red-400": generation_array.errors[:steps].any?}],
+              data: { generation_array_form_target: "stepsInput", action: "input->generation-array-form#updateEstimatedCost" } %>
           <p class="text-sm text-gray-500 mt-1">More steps = higher quality but slower generation</p>
         </div>
 
@@ -114,29 +118,29 @@
 
       <div class="mb-6">
         <div class="flex flex-wrap gap-3 mb-4">
-          <button type="button" onclick="selectAllStyles()" class="btn-secondary text-sm">
+          <button type="button" data-action="generation-array-form#selectAllStyles" class="btn-secondary text-sm">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
             Select All
           </button>
-          <button type="button" onclick="deselectAllStyles()" class="btn-secondary text-sm">
+          <button type="button" data-action="generation-array-form#deselectAllStyles" class="btn-secondary text-sm">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
             </svg>
             Clear All
           </button>
-          <button type="button" onclick="selectPopularStyles()" class="btn-secondary text-sm">
+          <button type="button" data-action="generation-array-form#selectPopularStyles" class="btn-secondary text-sm">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
             </svg>
             Popular Styles
           </button>
-          <button type="button" onclick="selectRandomStyles()" class="btn-primary text-sm" id="random-styles-btn">
+          <button type="button" data-action="generation-array-form#selectRandomStyles" data-generation-array-form-target="randomButton" class="btn-primary text-sm" id="random-styles-btn">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
             </svg>
-            <span id="random-btn-text">Random Styles</span>
+            <span data-generation-array-form-target="randomButtonText" id="random-btn-text">Random Styles</span>
           </button>
         </div>
 
@@ -146,7 +150,8 @@
               <label class="flex items-center space-x-3 p-3 rounded-lg hover:bg-white/60 transition-colors cursor-pointer">
                 <%= check_box_tag "generation_array[selected_styles][]", style, 
                     generation_array.selected_styles&.include?(style), 
-                    class: "style-checkbox w-4 h-4 text-orange-600 bg-white border-orange-300 rounded focus:ring-orange-500 focus:ring-2" %>
+                    class: "style-checkbox w-4 h-4 text-orange-600 bg-white border-orange-300 rounded focus:ring-orange-500 focus:ring-2",
+                    data: { generation_array_form_target: "styleCheckbox", action: "change->generation-array-form#styleChanged" } %>
                 <span class="text-sm text-gray-700 hover:text-gray-900 font-medium"><%= style %></span>
               </label>
             <% end %>
@@ -173,6 +178,31 @@
       </div>
     </div>
 
+    <div class="card p-6">
+      <h3 class="heading-font text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+        <svg class="w-6 h-6 mr-3 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 1.567-3 3.5S10.343 15 12 15s3-1.567 3-3.5S13.657 8 12 8z"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.4 15a7.96 7.96 0 00.6-3 8 8 0 10-8 8 7.96 7.96 0 003-.6"></path>
+        </svg>
+        Estimated Cost
+      </h3>
+
+      <div class="space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-gray-600">Images:</span>
+          <span class="font-medium text-gray-800" data-generation-array-form-target="estimatedImages" id="estimated-images">-</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-gray-600">Per image:</span>
+          <span class="font-medium text-gray-800" data-generation-array-form-target="estimatedPerImage" id="estimated-per-image">-</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-gray-600">Total:</span>
+          <span class="font-medium text-gray-800" data-generation-array-form-target="estimatedTotal" id="estimated-total">-</span>
+        </div>
+      </div>
+    </div>
+
     <!-- Submit Section -->
     <div class="text-center">
       <%= form.submit "Create Art Collection", class: "btn-primary text-lg px-8 py-4" %>
@@ -182,133 +212,5 @@
   <% end %>
 </div>
 
-<script>
-  const popularStyles = ['Photographic', 'Digital Art', 'Anime', 'Cinematic', 'Fantasy Art', 'Abstract', 'Watercolor', 'Oil Painting'];
-  
-  // Random selection configurations
-  const randomConfigs = [
-    { count: 5, label: '5 Random' },
-    { count: 8, label: '8 Random' },
-    { count: 12, label: '12 Random' },
-    { count: 15, label: '15 Random' }
-  ];
-  
-  let currentRandomConfig = 0;
-  
-  function selectAllStyles() {
-    document.querySelectorAll('.style-checkbox').forEach(checkbox => {
-      checkbox.checked = true;
-    });
-    updateRandomButtonText();
-  }
-  
-  function deselectAllStyles() {
-    document.querySelectorAll('.style-checkbox').forEach(checkbox => {
-      checkbox.checked = false;
-    });
-    updateRandomButtonText();
-  }
-  
-  function selectPopularStyles() {
-    document.querySelectorAll('.style-checkbox').forEach(checkbox => {
-      checkbox.checked = popularStyles.includes(checkbox.value);
-    });
-    updateRandomButtonText();
-  }
-  
-  function selectRandomStyles() {
-    const checkboxes = Array.from(document.querySelectorAll('.style-checkbox'));
-    const config = randomConfigs[currentRandomConfig];
-    
-    // Clear all selections first with animation
-    checkboxes.forEach(checkbox => {
-      checkbox.checked = false;
-      const label = checkbox.closest('label');
-      label.classList.remove('style-checkbox-highlight');
-    });
-    
-    // Shuffle array and select random styles
-    const shuffled = checkboxes.sort(() => 0.5 - Math.random());
-    const selectedCount = Math.min(config.count, checkboxes.length);
-    
-    // Add visual feedback during selection
-    const button = document.getElementById('random-styles-btn');
-    const buttonText = document.getElementById('random-btn-text');
-    
-    button.disabled = true;
-    button.classList.add('random-button-loading');
-    buttonText.textContent = '🎲 Selecting...';
-    
-    // Animate the selection process
-    let selectedSoFar = 0;
-    const selectionInterval = setInterval(() => {
-      if (selectedSoFar < selectedCount) {
-        const checkbox = shuffled[selectedSoFar];
-        const label = checkbox.closest('label');
-        
-        // Check the checkbox
-        checkbox.checked = true;
-        
-        // Add highlight animation
-        label.classList.add('style-checkbox-highlight');
-        
-        // Scroll into view with smooth animation
-        setTimeout(() => {
-          label.scrollIntoView({
-            behavior: 'smooth',
-            block: 'nearest'
-          });
-        }, 50);
-        
-        selectedSoFar++;
-        buttonText.textContent = `🎲 Selected ${selectedSoFar}/${selectedCount}`;
-      } else {
-        clearInterval(selectionInterval);
-        
-        // Cycle to next configuration for next click
-        currentRandomConfig = (currentRandomConfig + 1) % randomConfigs.length;
-        
-        // Reset button with success animation
-        setTimeout(() => {
-          button.disabled = false;
-          button.classList.remove('random-button-loading');
-          
-          // Show success feedback with emoji
-          buttonText.textContent = `✨ ${selectedCount} Styles Selected!`;
-          
-          // Add success pulse to button
-          button.classList.add('animate-pulse');
-          
-          setTimeout(() => {
-            button.classList.remove('animate-pulse');
-            updateRandomButtonText();
-          }, 2000);
-        }, 300);
-      }
-    }, 200); // Slightly slower for better visual effect
-  }
-  
-  function updateRandomButtonText() {
-    const buttonText = document.getElementById('random-btn-text');
-    const config = randomConfigs[currentRandomConfig];
-    const selectedCount = document.querySelectorAll('.style-checkbox:checked').length;
-    
-    if (selectedCount === 0) {
-      buttonText.textContent = `Random ${config.count}`;
-    } else {
-      buttonText.textContent = `Random ${config.count} (${selectedCount} selected)`;
-    }
-  }
-  
-  // Update button text on page load
-  document.addEventListener('DOMContentLoaded', updateRandomButtonText);
-  
-  // Update button text when checkboxes change
-  document.addEventListener('change', function(event) {
-    if (event.target.classList.contains('style-checkbox')) {
-      updateRandomButtonText();
-    }
-  });
-</script>
 
 

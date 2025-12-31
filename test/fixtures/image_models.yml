@@ -2,8 +2,26 @@
 
 one:
   external_id: MyString
-  model_spec: 
+  model_spec:
+    name: Test Model One
+    constraints:
+      steps:
+        default: 25
+        max: 50
+    pricing:
+      generation:
+        usd: 0.01
+        diem: 0.02
 
 two:
   external_id: MyString
-  model_spec: 
+  model_spec:
+    name: Test Model Two
+    constraints:
+      steps:
+        default: 20
+        max: 40
+    pricing:
+      generation:
+        usd: 0.02
+        diem: 0.04

@@ -35,4 +35,29 @@ class GenerationArray < ApplicationRecord
       end
     end
   end
+
+  def estimated_generation_count
+    return generations.size if association(:generations).loaded?
+    return generations.count if persisted?
+    return selected_styles.size if selected_styles.present? && selected_styles.any?
+
+    nil
+  end
+
+  def estimated_cost_per_image
+    base = image_model.generation_pricing
+    return {} if base.blank?
+
+    default_steps = image_model.constraints.dig("steps", "default")
+    factor = (default_steps.to_f > 0) ? (steps.to_f / default_steps.to_f) : 1.0
+
+    base.transform_values { |v| v.to_f * factor }
+  end
+
+  def estimated_total_cost
+    count = estimated_generation_count
+    return {} if count.blank?
+
+    estimated_cost_per_image.transform_values { |v| v.to_f * count.to_i }
+  end
 end

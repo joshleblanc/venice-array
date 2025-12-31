@@ -61,6 +61,36 @@
     </div>
   </div>
 
+  <!-- Cost Estimate -->
+  <% if generation_array.estimated_total_cost.present? %>
+    <div class="mb-6">
+      <h4 class="font-semibold text-gray-700 mb-3">Estimated Cost</h4>
+      <div class="space-y-2">
+        <% per = generation_array.estimated_cost_per_image %>
+        <% total = generation_array.estimated_total_cost %>
+        <% count = generation_array.estimated_generation_count %>
+        <div class="flex items-center justify-between">
+          <span class="text-gray-600">Images:</span>
+          <span class="font-medium text-gray-800"><%= count %></span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-gray-600">Per image:</span>
+          <span class="font-medium text-gray-800">
+            <%= number_to_currency(per["USD"].to_f) if per["USD"].present? %>
+            <%= " | #{per["DIEM"].to_f.round(4)} DIEM" if per["DIEM"].present? %>
+          </span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-gray-600">Total:</span>
+          <span class="font-medium text-gray-800">
+            <%= number_to_currency(total["USD"].to_f) if total["USD"].present? %>
+            <%= " | #{total["DIEM"].to_f.round(4)} DIEM" if total["DIEM"].present? %>
+          </span>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
   <!-- Selected Styles -->
   <div>
     <h4 class="font-semibold text-gray-700 mb-3">Style Selection</h4>
