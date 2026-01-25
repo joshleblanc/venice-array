@@ -39,7 +39,7 @@ export default class extends Controller {
     ]
 
     this.updateRandomButtonText()
-    this.updateEstimatedCost()
+    this.onModelChanged();
   }
 
   selectAllStyles() {
@@ -166,8 +166,18 @@ export default class extends Controller {
     if (selectedCount === 0) {
       this.randomButtonTextTarget.textContent = `Random ${config.count}`
     } else {
-      this.randomButtonTextTarget.textContent = `Random ${config.count} (${selectedCount} selected)`
+        this.randomButtonTextTarget.textContent = `Random ${config.count} (${selectedCount} selected)`
     }
+  }
+
+  onModelChanged() {
+    this.stepsInputTarget.value = this.modelCost ? this.modelCost.default_steps : 0
+    this.updateEstimatedCost()
+  }
+
+  get modelCost() {
+    const modelId = this.hasModelSelectTarget ? this.modelSelectTarget.value : null
+    return modelId && this.modelCostsValue ? this.modelCostsValue[modelId] : null
   }
 
   updateEstimatedCost() {
@@ -179,11 +189,9 @@ export default class extends Controller {
 
     this.estimatedImagesTarget.textContent = imageCount > 0 ? String(imageCount) : "-"
 
-    const modelId = this.hasModelSelectTarget ? this.modelSelectTarget.value : null
     const steps = this.hasStepsInputTarget ? parseFloat(this.stepsInputTarget.value || "0") : 0
 
-    const md = modelId && this.modelCostsValue ? this.modelCostsValue[modelId] : null
-
+    const md = this.modelCost;
     if (!md || (!md.USD && !md.DIEM)) {
       this.estimatedPerImageTarget.textContent = "-"
       this.estimatedTotalTarget.textContent = "-"

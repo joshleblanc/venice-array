@@ -1,5 +1,4 @@
 <% model_cost_data = @image_models.index_by(&:id).transform_values { |m| { "USD" => m.generation_pricing["USD"], "DIEM" => m.generation_pricing["DIEM"], "default_steps" => m.constraints.dig("steps", "default") } } %>
-
 <div class="max-w-4xl mx-auto" data-controller="generation-array-form" data-generation-array-form-model-costs-value="<%= h(model_cost_data.to_json) %>" data-generation-array-form-total-styles-value="<%= @available_styles.size %>">
   <%= form_with(model: generation_array, class: "space-y-8") do |form| %>
     <% if generation_array.errors.any? %>
@@ -26,12 +25,12 @@
         </svg>
         Creative Vision
       </h3>
-      
+
       <div class="space-y-6">
         <div>
           <%= form.label :prompt, "Describe your vision", class: "form-label" %>
-          <%= form.text_area :prompt, 
-              placeholder: "A serene landscape with mountains and a lake at sunset...", 
+          <%= form.text_area :prompt,
+              placeholder: "A serene landscape with mountains and a lake at sunset...",
               rows: 3,
               class: ["form-input resize-none", {"border-red-300 focus:ring-red-300 focus:border-red-400": generation_array.errors[:prompt].any?}] %>
           <p class="text-sm text-gray-500 mt-1">Be descriptive and specific for better results</p>
@@ -39,8 +38,8 @@
 
         <div>
           <%= form.label :negative_prompt, "What to avoid (optional)", class: "form-label" %>
-          <%= form.text_area :negative_prompt, 
-              placeholder: "blurry, low quality, distorted...", 
+          <%= form.text_area :negative_prompt,
+              placeholder: "blurry, low quality, distorted...",
               rows: 2,
               class: ["form-input resize-none", {"border-red-300 focus:ring-red-300 focus:border-red-400": generation_array.errors[:negative_prompt].any?}] %>
           <p class="text-sm text-gray-500 mt-1">Specify elements you don't want in your images</p>
@@ -61,16 +60,16 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <%= form.label :image_model_id, "AI Model", class: "form-label" %>
-          <%= form.collection_select :image_model_id, @image_models, :id, :name, 
+          <%= form.collection_select :image_model_id, @image_models, :id, :name,
               { prompt: "Choose your AI model" },
               class: ["form-input", {"border-red-300 focus:ring-red-300 focus:border-red-400": generation_array.errors[:image_model_id].any?}],
-              data: { generation_array_form_target: "modelSelect", action: "change->generation-array-form#updateEstimatedCost" } %>
+              data: { generation_array_form_target: "modelSelect", action: "change->generation-array-form#onModelChanged" } %>
           <p class="text-sm text-gray-500 mt-1">Different models excel at different styles</p>
         </div>
 
         <div>
           <%= form.label :cfg_scale, "Creativity Scale (1-20)", class: "form-label" %>
-          <%= form.number_field :cfg_scale, 
+          <%= form.number_field :cfg_scale,
               min: 1, max: 20, step: 0.5,
               class: ["form-input", {"border-red-300 focus:ring-red-300 focus:border-red-400": generation_array.errors[:cfg_scale].any?}] %>
           <p class="text-sm text-gray-500 mt-1">Higher values follow your prompt more closely</p>
@@ -78,7 +77,7 @@
 
         <div>
           <%= form.label :steps, "Quality Steps", class: "form-label" %>
-          <%= form.number_field :steps, 
+          <%= form.number_field :steps,
               class: ["form-input", {"border-red-300 focus:ring-red-300 focus:border-red-400": generation_array.errors[:steps].any?}],
               data: { generation_array_form_target: "stepsInput", action: "input->generation-array-form#updateEstimatedCost" } %>
           <p class="text-sm text-gray-500 mt-1">More steps = higher quality but slower generation</p>
@@ -86,14 +85,14 @@
 
         <div>
           <%= form.label :steps, "Seed", class: "form-label" %>
-          <%= form.number_field :seed, 
+          <%= form.number_field :seed,
               class: ["form-input", {"border-red-300 focus:ring-red-300 focus:border-red-400": generation_array.errors[:seed].any?}] %>
           <p class="text-sm text-gray-500 mt-1">The seed to use for each image - remove for random</p>
         </div>
 
         <div>
           <%= form.label :lora_strength, "Style Strength (0-100%)", class: "form-label" %>
-          <%= form.number_field :lora_strength, 
+          <%= form.number_field :lora_strength,
               min: 0, max: 100,
               class: ["form-input", {"border-red-300 focus:ring-red-300 focus:border-red-400": generation_array.errors[:lora_strength].any?}] %>
           <p class="text-sm text-gray-500 mt-1">How strongly to apply the selected style</p>
@@ -148,8 +147,8 @@
           <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-h-64 overflow-y-auto">
             <% @available_styles.each do |style| %>
               <label class="flex items-center space-x-3 p-3 rounded-lg hover:bg-white/60 transition-colors cursor-pointer">
-                <%= check_box_tag "generation_array[selected_styles][]", style, 
-                    generation_array.selected_styles&.include?(style), 
+                <%= check_box_tag "generation_array[selected_styles][]", style,
+                    generation_array.selected_styles&.include?(style),
                     class: "style-checkbox w-4 h-4 text-orange-600 bg-white border-orange-300 rounded focus:ring-orange-500 focus:ring-2",
                     data: { generation_array_form_target: "styleCheckbox", action: "change->generation-array-form#styleChanged" } %>
                 <span class="text-sm text-gray-700 hover:text-gray-900 font-medium"><%= style %></span>
@@ -211,6 +210,3 @@
 
   <% end %>
 </div>
-
-
-
