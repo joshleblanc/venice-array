@@ -7,7 +7,7 @@ image: jleb/venice_array
 # Deploy to these servers.
 servers:
   web:
-    - 138.197.155.169
+    - 147.189.173.240
   # job:
   #   hosts:
   #     - 192.168.0.1
